@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount, createEventDispatcher } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
   import { fade, blur, fly, slide, scale } from "svelte/transition";
   import { windowTransition } from "./consts";
 
@@ -18,14 +18,17 @@
   export let title = "Window";
   export let resizable = false;
 
+  let transitioning = false;
+
   let moving = false;
   let width: number;
   let height: number;
   let lastX: number;
   let lastY: number;
 
+  let windowWidth: number;
+
   function startMoving() {
-    console.log("start");
     setMoving(true);
   }
 
@@ -63,8 +66,6 @@
       lastY = touch.pageY;
     }
 
-    console.log(movementX, movementY, moving);
-
     if (moving) {
       left = Math.min(Math.max(left + movementX, 0), window.innerWidth - width);
       top = Math.min(Math.max(top + movementY, 0), window.innerHeight - height);
@@ -72,7 +73,6 @@
   }
 
   function onMouseUp(e: PointerEvent): void {
-    console.log("done");
     setMoving(false);
   }
 
@@ -94,14 +94,14 @@
 
     window.addEventListener("touchend", onMouseUp);
     window.addEventListener("touchmove", onMouseMove);
-  });
 
-  onDestroy(() => {
-    window.removeEventListener("pointerup", onMouseUp);
-    window.removeEventListener("pointermove", onMouseMove);
+    return () => {
+      window.removeEventListener("pointerup", onMouseUp);
+      window.removeEventListener("pointermove", onMouseMove);
 
-    window.removeEventListener("touchend", onMouseUp);
-    window.removeEventListener("touchmove", onMouseMove);
+      window.removeEventListener("touchend", onMouseUp);
+      window.removeEventListener("touchmove", onMouseMove);
+    };
   });
 </script>
 
@@ -110,7 +110,7 @@
       only scalar values seem to work?? -->
 <div
   class={clazz +
-    " drop-shadow-md window fixed min-w-fit min-h-fit overflow-hidden rounded-md flex flex-col"}
+    " drop-shadow-md window fixed min-h-fit overflow-hidden rounded-md grid"}
   class:resize={resizable}
   style:left={`${left}px`}
   style:top={`${top}px`}
@@ -119,6 +119,10 @@
   style:min-height={"2rem"}
   on:pointerdown={onPointerDown}
   transition:scale={windowTransition}
+  on:introstart={() => (transitioning = true)}
+  on:introend={() => (transitioning = false)}
+  on:outrostart={() => (transitioning = true)}
+  on:outroend={() => (transitioning = false)}
 >
   <div
     class={"w-full h-8 min-h-[2rem] grid justify-items-center items-center grid-cols-3 relative drop-shadow-sm px-2 " +
@@ -150,7 +154,7 @@
     </div>
   </div>
   <div class="bg-neutral-600 flex-1 overflow-auto flex flex-col">
-    <slot name="content" />
+    <slot {transitioning} name="content" />
   </div>
 </div>
 
@@ -161,5 +165,6 @@
 
   .window {
     -webkit-user-drag: none;
+    grid-template-rows: min-content 1fr;
   }
 </style>

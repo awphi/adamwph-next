@@ -1,12 +1,21 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
+  import AppIcon from "./AppIcon.svelte";
   import ConsoleWindowContent from "./ConsoleWindowContent.svelte";
-  import PlaceholderWindowContent from "./PlaceholderWindowContent.svelte";
+  import PrismWindowContent from "./PrismWindowContent.svelte";
   import type { AppDef, WindowDef } from "./types";
   import Window from "./Window.svelte";
 
   let focusedWindow = -1;
   let isAnyWindowMoving = false;
+
+  // Spawn a new window and merge in the app defintin that spawned it
+  function spawnFrom(app: AppDef): () => void {
+    return () => {
+      const appWindow = { ...app.spawn(), app: app };
+      appWindows = [...appWindows, appWindow];
+    };
+  }
 
   let apps: AppDef[] = [
     {
@@ -16,25 +25,24 @@
       spawn() {
         return {
           title: "Terminal",
-          app: apps[0],
           left: 200,
           top: 100,
         };
       },
     },
     {
-      name: "Some App",
-      icon: "mdi:application-outline",
-      component: PlaceholderWindowContent,
+      name: "welcome.txt",
+      icon: "mdi:file-document-outline",
+      component: PrismWindowContent,
       spawn() {
         return {
-          title: "Some Title",
-          app: apps[0],
+          title: "welcome.txt",
           left: 200,
           top: 100,
           resizable: true,
           props: {
-            source: import("./assets/longtest.js?raw"),
+            language: "markdown",
+            source: import("./assets/welcome.md?raw"),
           },
         };
       },
@@ -42,14 +50,6 @@
   ];
 
   let appWindows: WindowDef[] = [];
-
-  // Spawn a new window and merge in the app defintin that spawned it
-  function spawnFrom(app: AppDef): () => void {
-    return () => {
-      const appWindow = { ...app.spawn(), app: app };
-      appWindows = [...appWindows, appWindow];
-    };
-  }
 </script>
 
 <main class="grid h-full w-full">
@@ -81,7 +81,9 @@
             <Icon icon={appWindow.app.icon} slot="icon" />
             <svelte:component
               this={appWindow.app.component}
+              let:transitioning
               {...appWindow.props}
+              {transitioning}
               on:title-change={({ detail }) => (appWindow.title = detail)}
               slot="content"
             />
@@ -91,16 +93,7 @@
     </div>
     <div class="flex app-icon-container gap-10">
       {#each apps as app}
-        <button
-          class="app-icon"
-          on:touchend={spawnFrom(app)}
-          on:dblclick={spawnFrom(app)}
-        >
-          <Icon icon={app.icon} slot="icon" class="flex-1" width="84" />
-          <p class="overflow-hidden w-full text-ellipsis">
-            {app.name}
-          </p>
-        </button>
+        <AppIcon {app} on:spawn={spawnFrom(app)} />
       {/each}
     </div>
   </div>
@@ -137,12 +130,6 @@
 
   main {
     grid-template-rows: 1fr min-content;
-  }
-
-  .app-icon {
-    outline-color: rgba(229, 229, 229, 0.3);
-    grid-template-rows: min-content minmax(0, 1fr);
-    @apply grid overflow-hidden w-28 h-28 justify-items-center outline-1 hover:outline focus:outline rounded-sm focus:bg-blue-600 hover:bg-neutral-200 hover:bg-opacity-5 focus:bg-opacity-5 transition-colors select-none px-2;
   }
 
   .footer {
