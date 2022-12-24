@@ -1,8 +1,7 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
   import AppIcon from "./AppIcon.svelte";
-  import ConsoleWindowContent from "./ConsoleWindowContent.svelte";
-  import PrismWindowContent from "./PrismWindowContent.svelte";
+  import { appDefs } from "./apps";
   import type { AppDef, WindowDef } from "./types";
   import Window from "./Window.svelte";
 
@@ -10,45 +9,12 @@
   let isAnyWindowMoving = false;
 
   // Spawn a new window and merge in the app defintin that spawned it
-  function spawnFrom(app: AppDef): () => void {
-    return () => {
-      const appWindow = { ...app.spawn(), app: app };
-      appWindows = [...appWindows, appWindow];
-    };
+  function spawnFrom(app: AppDef): void {
+    const appWindow = { ...app.spawn(), app: app };
+    appWindows = [...appWindows, appWindow];
   }
 
-  let apps: AppDef[] = [
-    {
-      name: "Terminal",
-      icon: "mdi:console",
-      component: ConsoleWindowContent,
-      spawn() {
-        return {
-          title: "Terminal",
-          left: 200,
-          top: 100,
-        };
-      },
-    },
-    {
-      name: "welcome.txt",
-      icon: "mdi:file-document-outline",
-      component: PrismWindowContent,
-      spawn() {
-        return {
-          title: "welcome.txt",
-          left: 200,
-          top: 100,
-          resizable: true,
-          props: {
-            language: "markdown",
-            source: import("./assets/welcome.md?raw"),
-          },
-        };
-      },
-    },
-  ];
-
+  let apps = appDefs;
   let appWindows: WindowDef[] = [];
 </script>
 
@@ -71,10 +37,12 @@
             bind:left={appWindow.left}
             bind:top={appWindow.top}
             bind:title={appWindow.title}
+            bind:minimized={appWindow.isMinimized}
+            bind:maximized={appWindow.isMaximized}
+            bind:windowHeight={appWindow.windowHeight}
+            bind:windowWidth={appWindow.windowWidth}
             resizable={appWindow.resizable}
-            defaultHeight={appWindow.defaultHeight}
-            defaultWidth={appWindow.defaultWidth}
-            class={focusedWindow === i ? "z-10" : "z-0"}
+            class={focusedWindow === i ? "z-20" : "z-10"}
             headerClass={"bg-neutral-700" +
               (focusedWindow === i ? " filter contrast-[110%]" : "")}
           >
@@ -93,7 +61,20 @@
     </div>
     <div class="flex app-icon-container gap-10">
       {#each apps as app}
-        <AppIcon {app} on:spawn={spawnFrom(app)} />
+        <AppIcon
+          {app}
+          on:spawn={() => {
+            spawnFrom(app);
+            // Focus the newly opened window
+            focusedWindow = appWindows.length - 1;
+          }}
+          {appWindows}
+          on:minimize-change={({ detail: { appWindow, state } }) => {
+            appWindow.isMinimized = state;
+            // Re-assign to tell Svelte we've updated appWindows
+            appWindows = appWindows;
+          }}
+        />
       {/each}
     </div>
   </div>

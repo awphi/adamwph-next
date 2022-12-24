@@ -5,14 +5,14 @@ export interface WindowDef {
   app: AppDef;
   left: number;
   top: number;
-  // undefined = window is open but neither maximized nor minimized i.e. floating
-  state?: "maximized" | "minimized";
+  isMinimized?: boolean;
+  isMaximized?: boolean;
   resizable?: boolean;
   props?: {
     [id: string]: any;
   };
-  defaultHeight?: number;
-  defaultWidth?: number;
+  windowHeight?: number;
+  windowWidth?: number;
 }
 
 export interface AppDef {

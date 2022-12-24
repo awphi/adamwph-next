@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
-  import { fade, blur, fly, slide, scale } from "svelte/transition";
+  import { scale } from "svelte/transition";
   import { windowTransition } from "./consts";
 
   const dispatch = createEventDispatcher();
@@ -13,10 +13,20 @@
 
   export let left = 100;
   export let top = 100;
-  export let defaultWidth = 600;
-  export let defaultHeight = 400;
+  export let windowWidth: number;
+  export let windowHeight: number;
   export let title = "Window";
-  export let resizable = false;
+  export let resizable: boolean;
+  export let maximized: boolean;
+  export let minimized: boolean;
+
+  $: if (windowWidth === undefined) {
+    windowWidth = 600;
+  }
+
+  $: if (windowHeight === undefined) {
+    windowHeight = 400;
+  }
 
   let transitioning = false;
 
@@ -25,8 +35,6 @@
   let height: number;
   let lastX: number;
   let lastY: number;
-
-  let windowWidth: number;
 
   function startMoving() {
     setMoving(true);
@@ -108,55 +116,64 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- it would be nice if the min height could be set by the content slot + 2rem but min-h-fit doesn't work and not sure how else to do it robustly 
       only scalar values seem to work?? -->
-<div
-  class={clazz +
-    " drop-shadow-md window fixed min-h-fit overflow-hidden rounded-md grid"}
-  class:resize={resizable}
-  style:left={`${left}px`}
-  style:top={`${top}px`}
-  style:width={`${defaultWidth}px`}
-  style:height={`${defaultHeight}px`}
-  style:min-height={"2rem"}
-  on:pointerdown={onPointerDown}
-  transition:scale={windowTransition}
-  on:introstart={() => (transitioning = true)}
-  on:introend={() => (transitioning = false)}
-  on:outrostart={() => (transitioning = true)}
-  on:outroend={() => (transitioning = false)}
->
+
+{#if !minimized}
   <div
-    class={"w-full h-8 min-h-[2rem] grid justify-items-center items-center grid-cols-3 relative drop-shadow-sm px-2 " +
-      headerClazz}
-    on:pointerdown={startMoving}
-    on:touchstart={startMoving}
-    bind:offsetWidth={width}
-    bind:offsetHeight={height}
+    class={clazz +
+      " drop-shadow-md window fixed min-h-fit min-w-min overflow-hidden rounded-md grid"}
+    class:resize={resizable}
+    style:left={`${left}px`}
+    style:top={`${top}px`}
+    style:width={`${windowWidth}px`}
+    style:height={`${windowHeight}px`}
+    bind:clientWidth={windowWidth}
+    bind:clientHeight={windowHeight}
+    style:min-height={"2rem"}
+    on:pointerdown={onPointerDown}
+    transition:scale={windowTransition}
+    on:introstart={() => (transitioning = true)}
+    on:introend={() => (transitioning = false)}
+    on:outrostart={() => (transitioning = true)}
+    on:outroend={() => (transitioning = false)}
   >
-    <div class="w-full">
-      <slot name="icon" />
+    <div
+      class={"w-full h-8 min-h-[2rem] grid justify-items-center items-center grid-cols-3 relative drop-shadow-sm px-2 min-w-max " +
+        headerClazz}
+      on:pointerdown={startMoving}
+      on:touchstart={startMoving}
+      bind:offsetWidth={width}
+      bind:offsetHeight={height}
+    >
+      <div class="w-full">
+        <slot name="icon" />
+      </div>
+
+      <span class="select-none">{title}</span>
+
+      <div class="flex gap-1 w-full flex-row-reverse">
+        <button
+          class="bg-green-500 hover:bg-green-600 ctrl-btn"
+          on:click={() => {
+            maximized = true;
+          }}
+        />
+        <button
+          class="bg-yellow-500 hover:bg-yellow-600 ctrl-btn"
+          on:click={() => {
+            minimized = true;
+          }}
+        />
+        <button
+          class="bg-red-500 hover:bg-red-600 ctrl-btn"
+          on:click={() => dispatch("close")}
+        />
+      </div>
     </div>
-
-    <span class="select-none">{title}</span>
-
-    <div class="flex gap-1 w-full flex-row-reverse">
-      <button
-        class="bg-green-500 hover:bg-green-600 ctrl-btn"
-        on:click={() => dispatch("maximize")}
-      />
-      <button
-        class="bg-yellow-500 hover:bg-yellow-600 ctrl-btn"
-        on:click={() => dispatch("minimize")}
-      />
-      <button
-        class="bg-red-500 hover:bg-red-600 ctrl-btn"
-        on:click={() => dispatch("close")}
-      />
+    <div class="bg-neutral-600 flex-1 overflow-auto flex flex-col">
+      <slot {transitioning} name="content" />
     </div>
   </div>
-  <div class="bg-neutral-600 flex-1 overflow-auto flex flex-col">
-    <slot {transitioning} name="content" />
-  </div>
-</div>
+{/if}
 
 <style>
   button {
