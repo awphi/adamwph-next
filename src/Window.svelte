@@ -13,36 +13,67 @@
 
   export let left = 100;
   export let top = 100;
-  export let title: string = "Window";
+  export let defaultWidth = 600;
+  export let defaultHeight = 400;
+  export let title = "Window";
+  export let resizable = false;
 
   let moving = false;
   let width: number;
   let height: number;
+  let lastX: number;
+  let lastY: number;
 
-  function onMouseDown() {
-    moving = true;
+  function startMoving() {
+    console.log("start");
+    setMoving(true);
   }
 
-  function onMouseMove(e: PointerEvent) {
-    // Check if mouse buttons are up
-    if (e.buttons === 0) {
-      moving = false;
+  function setMoving(state: boolean): void {
+    if (state !== moving) {
+      moving = state;
+      dispatch("moving-state-changed", state);
+    }
+  }
+
+  function onMouseMove(e: PointerEvent | TouchEvent) {
+    let movementX: number = 0;
+    let movementY: number = 0;
+
+    if (e instanceof PointerEvent) {
+      // Check if mouse buttons are up
+      if (e.buttons === 0) {
+        setMoving(false);
+      }
+
+      movementX = e.movementX;
+      movementY = e.movementY;
+      lastX = e.pageX;
+      lastY = e.pageY;
+    } else {
+      // Extract a movementX & movementY value from the touch event
+      const touch = e.touches[0];
+
+      if (lastX) {
+        movementX = touch.pageX - lastX;
+        movementY = touch.pageY - lastY;
+      }
+
+      lastX = touch.pageX;
+      lastY = touch.pageY;
     }
 
+    console.log(movementX, movementY, moving);
+
     if (moving) {
-      left = Math.min(
-        Math.max(left + e.movementX, 0),
-        window.innerWidth - width
-      );
-      top = Math.min(
-        Math.max(top + e.movementY, 0),
-        window.innerHeight - height
-      );
+      left = Math.min(Math.max(left + movementX, 0), window.innerWidth - width);
+      top = Math.min(Math.max(top + movementY, 0), window.innerHeight - height);
     }
   }
 
   function onMouseUp(e: PointerEvent): void {
-    moving = false;
+    console.log("done");
+    setMoving(false);
   }
 
   function onPointerDown(e: PointerEvent): void {
@@ -60,29 +91,50 @@
   onMount(() => {
     window.addEventListener("pointerup", onMouseUp);
     window.addEventListener("pointermove", onMouseMove);
+
+    window.addEventListener("touchend", onMouseUp);
+    window.addEventListener("touchmove", onMouseMove);
   });
 
   onDestroy(() => {
     window.removeEventListener("pointerup", onMouseUp);
     window.removeEventListener("pointermove", onMouseMove);
+
+    window.removeEventListener("touchend", onMouseUp);
+    window.removeEventListener("touchmove", onMouseMove);
   });
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- it would be nice if the min height could be set by the content slot + 2rem but min-h-fit doesn't work and not sure how else to do it robustly 
+      only scalar values seem to work?? -->
 <div
-  class={clazz + " drop-shadow-md window"}
-  style={`left: ${left}px; top: ${top}px; position: absolute;`}
+  class={clazz +
+    " drop-shadow-md window fixed min-w-fit min-h-fit overflow-hidden rounded-md flex flex-col"}
+  class:resize={resizable}
+  style:left={`${left}px`}
+  style:top={`${top}px`}
+  style:width={`${defaultWidth}px`}
+  style:height={`${defaultHeight}px`}
+  style:min-height={"2rem"}
   on:pointerdown={onPointerDown}
   transition:scale={windowTransition}
 >
   <div
-    class={"w-full h-8 flex items-center justify-center rounded-t-md relative drop-shadow-sm " +
+    class={"w-full h-8 min-h-[2rem] grid justify-items-center items-center grid-cols-3 relative drop-shadow-sm px-2 " +
       headerClazz}
-    on:pointerdown={onMouseDown}
+    on:pointerdown={startMoving}
+    on:touchstart={startMoving}
     bind:offsetWidth={width}
     bind:offsetHeight={height}
   >
-    <div class="absolute right-2 top-2 flex gap-1">
+    <div class="w-full">
+      <slot name="icon" />
+    </div>
+
+    <span class="select-none">{title}</span>
+
+    <div class="flex gap-1 w-full flex-row-reverse">
       <button
         class="bg-green-500 hover:bg-green-600 ctrl-btn"
         on:click={() => dispatch("maximize")}
@@ -96,15 +148,18 @@
         on:click={() => dispatch("close")}
       />
     </div>
-    <span class="select-none">{title}</span>
   </div>
-  <div class="bg-neutral-600 rounded-b-md">
-    <slot />
+  <div class="bg-neutral-600 flex-1 overflow-auto flex flex-col">
+    <slot name="content" />
   </div>
 </div>
 
 <style>
   button {
     @apply rounded-full w-4 h-4;
+  }
+
+  .window {
+    -webkit-user-drag: none;
   }
 </style>
