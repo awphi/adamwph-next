@@ -20,13 +20,9 @@
   export let maximized: boolean;
   export let minimized: boolean;
 
-  $: if (windowWidth === undefined) {
-    windowWidth = 600;
-  }
-
-  $: if (windowHeight === undefined) {
-    windowHeight = 400;
-  }
+  // Coerce size to a default of (600, 400) if not specified
+  $: windowWidth = windowWidth ?? 600;
+  $: windowHeight = windowHeight ?? 400;
 
   let transitioning = false;
 
@@ -116,64 +112,60 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- it would be nice if the min height could be set by the content slot + 2rem but min-h-fit doesn't work and not sure how else to do it robustly 
       only scalar values seem to work?? -->
-
-{#if !minimized}
+<div
+  class={clazz +
+    " drop-shadow-md window fixed min-w-min overflow-hidden rounded-md grid transition-opacity min-h-[2rem]"}
+  class:resize={resizable}
+  class:opacity-0={minimized}
+  class:pointer-events-none={minimized}
+  style:left={`${left}px`}
+  style:top={`${top}px`}
+  style:width={`${windowWidth}px`}
+  style:height={`${windowHeight}px`}
+  on:pointerdown={onPointerDown}
+  transition:scale={windowTransition}
+  on:introstart={() => (transitioning = true)}
+  on:introend={() => (transitioning = false)}
+  on:outrostart={() => (transitioning = true)}
+  on:outroend={() => (transitioning = false)}
+>
   <div
-    class={clazz +
-      " drop-shadow-md window fixed min-h-fit min-w-min overflow-hidden rounded-md grid"}
-    class:resize={resizable}
-    style:left={`${left}px`}
-    style:top={`${top}px`}
-    style:width={`${windowWidth}px`}
-    style:height={`${windowHeight}px`}
-    bind:clientWidth={windowWidth}
-    bind:clientHeight={windowHeight}
-    style:min-height={"2rem"}
-    on:pointerdown={onPointerDown}
-    transition:scale={windowTransition}
-    on:introstart={() => (transitioning = true)}
-    on:introend={() => (transitioning = false)}
-    on:outrostart={() => (transitioning = true)}
-    on:outroend={() => (transitioning = false)}
+    class={"w-full h-8 min-h-[2rem] grid justify-items-center items-center grid-cols-3 relative drop-shadow-sm px-2 min-w-max " +
+      headerClazz}
+    on:pointerdown={startMoving}
+    on:touchstart={startMoving}
+    bind:offsetWidth={width}
+    bind:offsetHeight={height}
   >
-    <div
-      class={"w-full h-8 min-h-[2rem] grid justify-items-center items-center grid-cols-3 relative drop-shadow-sm px-2 min-w-max " +
-        headerClazz}
-      on:pointerdown={startMoving}
-      on:touchstart={startMoving}
-      bind:offsetWidth={width}
-      bind:offsetHeight={height}
-    >
-      <div class="w-full">
-        <slot name="icon" />
-      </div>
-
-      <span class="select-none">{title}</span>
-
-      <div class="flex gap-1 w-full flex-row-reverse">
-        <button
-          class="bg-green-500 hover:bg-green-600 ctrl-btn"
-          on:click={() => {
-            maximized = true;
-          }}
-        />
-        <button
-          class="bg-yellow-500 hover:bg-yellow-600 ctrl-btn"
-          on:click={() => {
-            minimized = true;
-          }}
-        />
-        <button
-          class="bg-red-500 hover:bg-red-600 ctrl-btn"
-          on:click={() => dispatch("close")}
-        />
-      </div>
+    <div class="w-full">
+      <slot name="icon" />
     </div>
-    <div class="bg-neutral-600 flex-1 overflow-auto flex flex-col">
-      <slot {transitioning} name="content" />
+
+    <span class="select-none">{title}</span>
+
+    <div class="flex gap-1 w-full flex-row-reverse">
+      <button
+        class="bg-green-500 hover:bg-green-600 ctrl-btn"
+        on:click={() => {
+          maximized = true;
+        }}
+      />
+      <button
+        class="bg-yellow-500 hover:bg-yellow-600 ctrl-btn"
+        on:click={() => {
+          minimized = true;
+        }}
+      />
+      <button
+        class="bg-red-500 hover:bg-red-600 ctrl-btn"
+        on:click={() => dispatch("close")}
+      />
     </div>
   </div>
-{/if}
+  <div class="bg-neutral-600 flex-1 overflow-auto flex flex-col">
+    <slot {transitioning} name="content" />
+  </div>
+</div>
 
 <style>
   button {

@@ -20,4 +20,5 @@ export interface AppDef {
   icon: string;
   component: ComponentType;
   spawn: () => Omit<WindowDef, "app">;
+  maxInstances?: number;
 }

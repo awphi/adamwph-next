@@ -68,6 +68,12 @@
             // Focus the newly opened window
             focusedWindow = appWindows.length - 1;
           }}
+          on:focus={({ detail }) => {
+            detail.isMinimized = false;
+            focusedWindow = appWindows.findIndex((d) => d === detail);
+            appWindows = appWindows;
+            console.log(detail);
+          }}
           {appWindows}
           on:minimize-change={({ detail: { appWindow, state } }) => {
             appWindow.isMinimized = state;

@@ -8,7 +8,7 @@ I enjoy a wide variety of different fields and all the challenges each one bring
 
 The majority of my experience is in JS/TS & related technologies - name a JS library/framework (FE or BE) and I'll likely be familiar with it if I've not used it in one of my many side projects.
 
-In my current role I'm part of a team that makes a suite of high-performance commercial graph & timeline visualization libraries in TypeScript rendering in WebGL or canvas. It was an interesting to get started as in my previous projects I paid no mind to e2e/unit testing, no-external-library rules, or developer experience - but these are all essential skills for me now.
+In my current role I'm part of a team that makes a suite of high-performance commercial graph & timeline visualization libraries for the browser. It was an interesting to get started as in my previous projects I paid no mind to e2e/unit testing, no-external-library rules, or developer experience - but these are all essential skills for me now.
 
 # What is this site?
 The web app is a mock-desktop so each app on your homescreen can be opened, closed, minimized, and you can have multiples instances of each app open.

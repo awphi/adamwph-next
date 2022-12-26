@@ -2,47 +2,75 @@
   import Icon from "@iconify/svelte";
   import { createEventDispatcher } from "svelte";
   import { fade } from "svelte/transition";
+  import AppIconMenu from "./AppIconMenu.svelte";
   import { appIconBarTransition } from "./consts";
-
   import type { AppDef, WindowDef } from "./types";
+
   const dispatch = createEventDispatcher();
+
+  let container: HTMLElement;
 
   export let appWindows: WindowDef[];
   export let app: AppDef;
 
+  let isMenuOpen = false;
+
+  function onContextMenu(e: MouseEvent): void {
+    e.preventDefault();
+    isMenuOpen = true;
+    // TODO select-y context menu with "Open New..." button + close icon for open windows/click to open
+  }
+
   function onClick(): void {
-    if (openInstancesOfApp.length === 1) {
-      const w = openInstancesOfApp[0];
+    if (openInstancesOfApp.length === 0) {
+      dispatch("spawn");
+    } else if (openInstancesOfApp.length === 1) {
       dispatch("minimize-change", {
-        appWindow: w,
-        state: !w.isMinimized,
+        appWindow: openInstancesOfApp[0],
+        state: !openInstancesOfApp[0].isMinimized,
       });
-    } else if (openInstancesOfApp.length > 1) {
-      // TODO window preview thing to select which open instance to unminimize
     }
   }
+
+  let maxInstances: number;
+  $: maxInstances = app.maxInstances ?? 5;
 
   let openInstancesOfApp: WindowDef[];
   $: openInstancesOfApp = appWindows.filter((a) => a !== null && a.app === app);
 </script>
 
-<!-- TODO Touch events - single tap to spawn/toggle minimize when instances = 0 / 1, long hold to bring up multi-preview when instances > 1? Need gestures lib? -->
-<button
-  class="app-icon"
-  on:click={onClick}
-  on:dblclick={() => dispatch("spawn")}
->
-  <Icon icon={app.icon} slot="icon" class="flex-1" width="84" />
-  <p class="overflow-hidden w-full text-ellipsis">
-    {app.name}
-  </p>
-  {#if openInstancesOfApp.length > 0}
-    <div
-      transition:fade={appIconBarTransition}
-      class="h-[2px] w-full bg-neutral-500 rounded-md"
-    />
-  {/if}
-</button>
+<!-- Purposefully not using double click as a) it's bad on mobile and b) it's not expected for a website to respond to double clicks (usually) -->
+<div class="relative flex flex-col items-center" bind:this={container}>
+  <button
+    class="app-icon"
+    on:click={onClick}
+    on:contextmenu={onContextMenu}
+    on:blur={() => {
+      // We only close the menu if nothing in the menu has focus (to give it time to forward events back to this component) - it will close itself
+      if (container.querySelector(":active") === null) {
+        isMenuOpen = false;
+      }
+    }}
+  >
+    <Icon icon={app.icon} slot="icon" class="flex-1" width="84" />
+    <p class="overflow-hidden w-full text-ellipsis">
+      {app.name}
+    </p>
+    {#if openInstancesOfApp.length > 0}
+      <div
+        transition:fade={appIconBarTransition}
+        class="h-[2px] w-full bg-neutral-500 rounded-md"
+      />
+    {/if}
+  </button>
+  <AppIconMenu
+    instances={openInstancesOfApp}
+    bind:open={isMenuOpen}
+    on:focus={({ detail }) => dispatch("focus", detail)}
+    on:spawn={() => dispatch("spawn")}
+    {maxInstances}
+  />
+</div>
 
 <style>
   .app-icon {
