@@ -36,7 +36,8 @@ const fs = {
   },
   isDirectory(pth: string): boolean {
     // Naive as hell but works for this simple app
-    return fs.exists(pth) && !resolve(pth).includes(".");
+    const res = resolve(pth);
+    return fs.exists(pth) && !res.includes(".") && !(res in executables);
   },
   readFile(pth: string): string | undefined {
     return volDef[resolve(pth)];
