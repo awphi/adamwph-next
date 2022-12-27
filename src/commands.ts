@@ -8,7 +8,7 @@ interface CommandDef {
   usage: string;
 }
 
-process.cwd = () => {
+window.process.cwd = () => {
   return "/";
 };
 
