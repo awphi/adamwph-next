@@ -8,10 +8,6 @@ interface CommandDef {
   usage: string;
 }
 
-window.process.cwd = () => {
-  return "/";
-};
-
 // Specify our executables - these will get added to the in-mem fs as readable files that can also be executed
 const executables: { [id: string]: CommandFunc } = {
   "/bitcoin_miner": bitcoin_miner,
