@@ -53,7 +53,7 @@
 </script>
 
 <div bind:this={container} class="h-full">
-  <pre class={`line-numbers h-full language-${language} `} bind:this={pre}><code
+  <pre class={`line-numbers h-full language-${language}`} bind:this={pre}><code
       bind:this={code}
     /></pre>
 </div>

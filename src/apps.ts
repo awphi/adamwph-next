@@ -16,6 +16,7 @@ export const appDefs: AppDef[] = [
         title: "Terminal",
         left: 200,
         top: 100,
+        resizable: true,
       };
     },
   },

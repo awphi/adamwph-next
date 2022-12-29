@@ -44,31 +44,19 @@
   }
 
   function onMouseMove(e: PointerEvent | TouchEvent) {
+    // We cannot use e.movementX as it's not consistent across browsers/machines
     let movementX: number = 0;
     let movementY: number = 0;
 
-    if (e instanceof PointerEvent) {
-      // Check if mouse buttons are up
-      if (e.buttons === 0) {
-        setMoving(false);
-      }
-
-      movementX = e.movementX;
-      movementY = e.movementY;
-      lastX = e.pageX;
-      lastY = e.pageY;
-    } else {
-      // Extract a movementX & movementY value from the touch event
-      const touch = e.touches[0];
-
-      if (lastX) {
-        movementX = touch.pageX - lastX;
-        movementY = touch.pageY - lastY;
-      }
-
-      lastX = touch.pageX;
-      lastY = touch.pageY;
+    // Extract a movementX & movementY value from the touch event
+    let touch = e instanceof PointerEvent ? e : e.touches[0];
+    if (lastX !== undefined) {
+      movementX = touch.pageX - lastX;
+      movementY = touch.pageY - lastY;
     }
+
+    lastX = touch.pageX;
+    lastY = touch.pageY;
 
     if (moving) {
       left = Math.min(Math.max(left + movementX, 0), window.innerWidth - width);

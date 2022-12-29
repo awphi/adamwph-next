@@ -57,17 +57,17 @@
   {#each lines as line}
     <div class="line">
       {#if line.type === "command"}
-        <span>{prompt}{symbol}</span>
+        <code>{prompt}{symbol}</code>
       {/if}
-      <span
+      <code
         class="line-content"
         class:text-neutral-400={line.type === "stdout"}
-        class:text-green-500={line.type === "command"}>{line.text}</span
+        class:text-green-500={line.type === "command"}>{line.text}</code
       >
     </div>
   {/each}
   <div class="line">
-    <span>{prompt}{symbol}</span>
+    <code>{prompt}{symbol}</code>
     <input
       bind:this={inputEl}
       type="text"
@@ -86,5 +86,10 @@
 
   .line-content {
     line-break: anywhere;
+  }
+
+  input {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
   }
 </style>

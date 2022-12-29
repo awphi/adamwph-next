@@ -190,8 +190,7 @@ function ls(ops: string[]): string[] {
       return o;
     }
   });
-  // We use U+2003 for some padding
-  return [files.join(" ")];
+  return [files.join("    ")];
 }
 
 function help(): string[] {
