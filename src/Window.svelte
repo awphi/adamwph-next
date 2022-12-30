@@ -20,10 +20,6 @@
   export let maximized: boolean;
   export let minimized: boolean;
 
-  // Coerce size to a default of (600, 400) if not specified
-  $: windowWidth = windowWidth ?? 600;
-  $: windowHeight = windowHeight ?? 400;
-
   let transitioning = false;
 
   let moving = false;
@@ -43,6 +39,12 @@
     }
   }
 
+  function assertPosition(movementX = 0, movementY = 0): void {
+    const { width: bw, height: bh } = document.body.getBoundingClientRect();
+    left = Math.min(Math.max(left + movementX, 0), bw - width);
+    top = Math.min(Math.max(top + movementY, 0), bh - height);
+  }
+
   function onMouseMove(e: PointerEvent | TouchEvent) {
     // We cannot use e.movementX as it's not consistent across browsers/machines
     let movementX: number = 0;
@@ -59,8 +61,7 @@
     lastY = touch.pageY;
 
     if (moving) {
-      left = Math.min(Math.max(left + movementX, 0), window.innerWidth - width);
-      top = Math.min(Math.max(top + movementY, 0), window.innerHeight - height);
+      assertPosition(movementX, movementY);
     }
   }
 
@@ -86,6 +87,8 @@
 
     window.addEventListener("touchend", onMouseUp);
     window.addEventListener("touchmove", onMouseMove);
+
+    assertPosition();
 
     return () => {
       window.removeEventListener("pointerup", onMouseUp);

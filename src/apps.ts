@@ -1,6 +1,18 @@
-import type { AppDef } from "./types";
+import type { AppDef, PartialWindow } from "./types";
 import ConsoleWindowContent from "./ConsoleWindowContent.svelte";
 import PrismWindowContent from "./PrismWindowContent.svelte";
+
+export const defaultWindowProps: Required<PartialWindow> = {
+  left: 100,
+  top: 100,
+  windowWidth: 600,
+  windowHeight: 400,
+  resizable: true,
+  isMaximized: false,
+  isMinimized: false,
+  title: "Unknown Window",
+  props: {},
+};
 
 /**
  * New apps can be added here, they have a few required properties and must implement a method to spawn a new window of the app.
@@ -14,9 +26,7 @@ export const appDefs: AppDef[] = [
     spawn() {
       return {
         title: "Terminal",
-        left: 200,
-        top: 100,
-        resizable: true,
+        windowWidth: 640,
       };
     },
   },
@@ -29,7 +39,6 @@ export const appDefs: AppDef[] = [
         title: "welcome.txt",
         left: 200,
         top: 100,
-        resizable: true,
         props: {
           language: "markdown",
           source: import("./assets/welcome.md?raw"),

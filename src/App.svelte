@@ -1,35 +1,44 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
   import AppIcon from "./AppIcon.svelte";
-  import { appDefs } from "./apps";
+  import { appDefs, defaultWindowProps } from "./apps";
   import type { AppDef, WindowDef } from "./types";
   import Window from "./Window.svelte";
 
   let focusedWindow = -1;
   let isAnyWindowMoving = false;
 
-  // Spawn a new window and merge in the app defintin that spawned it
   function spawnFrom(app: AppDef): void {
-    const appWindow = { ...app.spawn(), app: app };
+    const partial = app.spawn();
+    const appWindow = { ...defaultWindowProps, ...partial, app: app };
     appWindows = [...appWindows, appWindow];
+    focusedWindow = appWindows.length - 1;
   }
 
   let apps = appDefs;
   let appWindows: WindowDef[] = [];
+
+  // TODO clear focusedWindow when clicking on background
 </script>
 
-<main class="grid h-full w-full">
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<main class="grid h-full w-full min-w-[800px]">
   <div class="flex items-center justify-center overflow-hidden">
     <!-- Disable user selection when a window is moving to prevent text dragging behaviour if some text in a window is highlighted -->
-    <div class="window-container " class:select-none={isAnyWindowMoving}>
+    <div class="window-container" class:select-none={isAnyWindowMoving}>
       {#each appWindows as appWindow, i}
         {#if appWindow !== null}
           <Window
-            on:click={() => (focusedWindow = i)}
+            on:click={() => {
+              focusedWindow = i;
+            }}
             on:close={() => {
               // We can't just filter out the window from the array as its position will be confused when animating
               // Setting it to null does the trick and let the gc worry about memory...
               appWindows[i] = null;
+              if (i === focusedWindow) {
+                focusedWindow = -1;
+              }
             }}
             on:moving-state-changed={({ detail }) => {
               isAnyWindowMoving = detail;
@@ -42,7 +51,7 @@
             bind:windowHeight={appWindow.windowHeight}
             bind:windowWidth={appWindow.windowWidth}
             resizable={appWindow.resizable}
-            class={focusedWindow === i ? "z-20" : "z-10"}
+            class={focusedWindow === i ? "z-30" : "z-20"}
             headerClass={"bg-neutral-700" +
               (focusedWindow === i ? " filter contrast-[110%]" : "")}
           >
@@ -72,7 +81,6 @@
             detail.isMinimized = false;
             focusedWindow = appWindows.findIndex((d) => d === detail);
             appWindows = appWindows;
-            console.log(detail);
           }}
           {appWindows}
           on:minimize-change={({ detail: { appWindow, state } }) => {

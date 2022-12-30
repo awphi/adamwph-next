@@ -9,6 +9,7 @@
   const dispatch = createEventDispatcher();
 
   let container: HTMLElement;
+  let button: HTMLButtonElement;
 
   export let appWindows: WindowDef[];
   export let app: AppDef;
@@ -16,12 +17,15 @@
   let isMenuOpen = false;
 
   function onContextMenu(e: MouseEvent): void {
+    // Firefox and Safari don't implictly focus a button on click
+    button.focus();
     e.preventDefault();
     isMenuOpen = true;
-    // TODO select-y context menu with "Open New..." button + close icon for open windows/click to open
   }
 
-  function onClick(): void {
+  function onClick(e: MouseEvent): void {
+    // Firefox and Safari don't implictly focus a button on click
+    button.focus();
     if (openInstancesOfApp.length === 0) {
       dispatch("spawn");
     } else if (openInstancesOfApp.length === 1) {
@@ -45,6 +49,7 @@
     class="app-icon"
     on:click={onClick}
     on:contextmenu={onContextMenu}
+    bind:this={button}
     on:blur={() => {
       // We only close the menu if nothing in the menu has focus (to give it time to forward events back to this component) - it will close itself
       if (container.querySelector(":active") === null) {
