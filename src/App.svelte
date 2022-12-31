@@ -1,59 +1,60 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
   import AppIcon from "./AppIcon.svelte";
-  import { appDefs, defaultWindowProps } from "./apps";
+  import { appDefs } from "./apps";
+  import { defaultWindowProps } from "./consts";
   import type { AppDef, WindowDef } from "./types";
   import Window from "./Window.svelte";
 
-  let focusedWindow = -1;
   let isAnyWindowMoving = false;
 
-  function spawnFrom(app: AppDef): void {
+  function spawnFrom(app: AppDef): WindowDef {
     const partial = app.spawn();
     const appWindow = { ...defaultWindowProps, ...partial, app: app };
     appWindows = [...appWindows, appWindow];
-    focusedWindow = appWindows.length - 1;
+    return appWindow;
+  }
+
+  // Avoid manipulating isFocused directly - use this where possible
+  function focusWindow(appWindow: WindowDef | null): void {
+    appWindows.forEach((a) => {
+      if (a === null) {
+        return;
+      }
+      a.isFocused = false;
+    });
+    if (appWindow !== null) {
+      appWindow.isFocused = true;
+    }
+    appWindows = appWindows;
   }
 
   let apps = appDefs;
   let appWindows: WindowDef[] = [];
-
-  // TODO clear focusedWindow when clicking on background
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<main class="grid h-full w-full min-w-[800px]">
+<main
+  on:click={() => focusWindow(null)}
+  class="grid h-full w-full min-w-[800px]"
+>
   <div class="flex items-center justify-center overflow-hidden">
     <!-- Disable user selection when a window is moving to prevent text dragging behaviour if some text in a window is highlighted -->
     <div class="window-container" class:select-none={isAnyWindowMoving}>
       {#each appWindows as appWindow, i}
         {#if appWindow !== null}
           <Window
-            on:click={() => {
-              focusedWindow = i;
-            }}
+            on:pointerdown={() => focusWindow(appWindow)}
             on:close={() => {
               // We can't just filter out the window from the array as its position will be confused when animating
               // Setting it to null does the trick and let the gc worry about memory...
               appWindows[i] = null;
-              if (i === focusedWindow) {
-                focusedWindow = -1;
-              }
             }}
             on:moving-state-changed={({ detail }) => {
               isAnyWindowMoving = detail;
             }}
-            bind:left={appWindow.left}
-            bind:top={appWindow.top}
-            bind:title={appWindow.title}
-            bind:minimized={appWindow.isMinimized}
-            bind:maximized={appWindow.isMaximized}
-            bind:windowHeight={appWindow.windowHeight}
-            bind:windowWidth={appWindow.windowWidth}
-            resizable={appWindow.resizable}
-            class={focusedWindow === i ? "z-30" : "z-20"}
-            headerClass={"bg-neutral-700" +
-              (focusedWindow === i ? " filter contrast-[110%]" : "")}
+            bind:appWindow
+            index={i}
           >
             <Icon icon={appWindow.app.icon} slot="icon" />
             <svelte:component
@@ -61,7 +62,6 @@
               let:transitioning
               {...appWindow.props}
               {transitioning}
-              on:title-change={({ detail }) => (appWindow.title = detail)}
               slot="content"
             />
           </Window>
@@ -73,19 +73,16 @@
         <AppIcon
           {app}
           on:spawn={() => {
-            spawnFrom(app);
-            // Focus the newly opened window
-            focusedWindow = appWindows.length - 1;
+            const newWin = spawnFrom(app);
+            focusWindow(newWin);
           }}
           on:focus={({ detail }) => {
             detail.isMinimized = false;
-            focusedWindow = appWindows.findIndex((d) => d === detail);
-            appWindows = appWindows;
+            focusWindow(detail);
           }}
           {appWindows}
           on:minimize-change={({ detail: { appWindow, state } }) => {
             appWindow.isMinimized = state;
-            // Re-assign to tell Svelte we've updated appWindows
             appWindows = appWindows;
           }}
         />

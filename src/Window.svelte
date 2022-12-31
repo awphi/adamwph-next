@@ -2,26 +2,13 @@
   import { onMount, createEventDispatcher } from "svelte";
   import { scale } from "svelte/transition";
   import { windowTransition } from "./consts";
+  import type { WindowDef } from "./types";
 
   const dispatch = createEventDispatcher();
 
-  let clazz: string = "";
-  export { clazz as class };
-
-  let headerClazz: string = "";
-  export { headerClazz as headerClass };
-
-  export let left = 100;
-  export let top = 100;
-  export let windowWidth: number;
-  export let windowHeight: number;
-  export let title = "Window";
-  export let resizable: boolean;
-  export let maximized: boolean;
-  export let minimized: boolean;
+  export let appWindow: WindowDef;
 
   let transitioning = false;
-
   let moving = false;
   let width: number;
   let height: number;
@@ -41,8 +28,14 @@
 
   function assertPosition(movementX = 0, movementY = 0): void {
     const { width: bw, height: bh } = document.body.getBoundingClientRect();
-    left = Math.min(Math.max(left + movementX, 0), bw - width);
-    top = Math.min(Math.max(top + movementY, 0), bh - height);
+    appWindow.left = Math.min(
+      Math.max(appWindow.left + movementX, 0),
+      bw - width
+    );
+    appWindow.top = Math.min(
+      Math.max(appWindow.top + movementY, 0),
+      bh - height
+    );
   }
 
   function onMouseMove(e: PointerEvent | TouchEvent) {
@@ -78,7 +71,7 @@
       return;
     }
 
-    dispatch("click");
+    dispatch("pointerdown");
   }
 
   onMount(() => {
@@ -104,25 +97,26 @@
 <!-- it would be nice if the min height could be set by the content slot + 2rem but min-h-fit doesn't work and not sure how else to do it robustly 
       only scalar values seem to work?? -->
 <div
-  class={clazz +
-    " drop-shadow-md window fixed min-w-min overflow-hidden rounded-md grid transition-opacity min-h-[2rem]"}
-  class:resize={resizable}
-  class:opacity-0={minimized}
-  class:pointer-events-none={minimized}
-  style:left={`${left}px`}
-  style:top={`${top}px`}
-  style:width={`${windowWidth}px`}
-  style:height={`${windowHeight}px`}
+  class="drop-shadow-md window fixed min-w-min overflow-hidden rounded-md grid transition-opacity min-h-[2rem]"
+  class:resize={appWindow.resizable}
+  class:opacity-0={appWindow.isMinimized}
+  class:pointer-events-none={appWindow.isMinimized}
+  style:z-index={`${appWindow.isFocused ? 30 : 20}`}
+  style:left={`${appWindow.left}px`}
+  style:top={`${appWindow.top}px`}
+  style:width={`${appWindow.windowWidth}px`}
+  style:height={`${appWindow.windowHeight}px`}
   on:pointerdown={onPointerDown}
   transition:scale={windowTransition}
   on:introstart={() => (transitioning = true)}
   on:introend={() => (transitioning = false)}
   on:outrostart={() => (transitioning = true)}
   on:outroend={() => (transitioning = false)}
+  on:click={(e) => e.stopPropagation()}
 >
   <div
-    class={"w-full h-8 min-h-[2rem] grid justify-items-center items-center grid-cols-3 relative drop-shadow-sm px-2 min-w-max " +
-      headerClazz}
+    class="w-full h-8 min-h-[2rem] grid justify-items-center items-center grid-cols-3 relative drop-shadow-sm px-2 min-w-max bg-neutral-700 filter"
+    class:contrast-[110%]={appWindow.isFocused}
     on:pointerdown={startMoving}
     on:touchstart={startMoving}
     bind:offsetWidth={width}
@@ -132,19 +126,19 @@
       <slot name="icon" />
     </div>
 
-    <span class="select-none">{title}</span>
+    <span class="select-none">{appWindow.title}</span>
 
     <div class="flex gap-1 w-full flex-row-reverse">
       <button
         class="bg-green-500 hover:bg-green-600 ctrl-btn"
         on:click={() => {
-          maximized = true;
+          appWindow.isMaximized = true;
         }}
       />
       <button
         class="bg-yellow-500 hover:bg-yellow-600 ctrl-btn"
         on:click={() => {
-          minimized = true;
+          appWindow.isMinimized = true;
         }}
       />
       <button

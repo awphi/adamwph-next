@@ -26,6 +26,7 @@
   function onClick(e: MouseEvent): void {
     // Firefox and Safari don't implictly focus a button on click
     button.focus();
+    e.stopPropagation();
     if (openInstancesOfApp.length === 0) {
       dispatch("spawn");
     } else if (openInstancesOfApp.length === 1) {

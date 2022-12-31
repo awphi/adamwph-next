@@ -8,6 +8,7 @@ export interface WindowDef {
   isMinimized: boolean;
   isMaximized: boolean;
   resizable: boolean;
+  isFocused: boolean;
   props?: {
     [id: string]: any;
   };
@@ -26,6 +27,7 @@ export type PartialWindow = Optional<
   | "windowHeight"
   | "left"
   | "top"
+  | "isFocused"
 >;
 
 export interface AppDef {
