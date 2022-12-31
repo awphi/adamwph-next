@@ -2,6 +2,9 @@
   import { tick } from "svelte";
   import { execute } from "./commands";
 
+  export let prompt = "adamw.ph";
+  export let symbol = ":$";
+
   interface LineDef {
     type: "command" | "stdout";
     text: string;
@@ -25,12 +28,9 @@
       );
       inputEl.value = "";
       lines = lines;
-      // TODO autoscroll to bottom (might have to be on a timeout or a resize observer?)
     }
   }
 
-  export let prompt = "adamw.ph";
-  export let symbol = ":$";
   let contentEl: HTMLDivElement;
   let inputEl: HTMLInputElement;
   let lines: LineDef[] = [

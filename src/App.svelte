@@ -33,9 +33,8 @@
   let appWindows: WindowDef[] = [];
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
 <main
-  on:click={() => focusWindow(null)}
+  on:pointerdown={() => focusWindow(null)}
   class="grid h-full w-full min-w-[800px]"
 >
   <div class="flex items-center justify-center overflow-hidden">
@@ -54,7 +53,6 @@
               isAnyWindowMoving = detail;
             }}
             bind:appWindow
-            index={i}
           >
             <Icon icon={appWindow.app.icon} slot="icon" />
             <svelte:component

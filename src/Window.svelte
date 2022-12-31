@@ -71,6 +71,7 @@
       return;
     }
 
+    e.stopPropagation();
     dispatch("pointerdown");
   }
 
@@ -112,7 +113,6 @@
   on:introend={() => (transitioning = false)}
   on:outrostart={() => (transitioning = true)}
   on:outroend={() => (transitioning = false)}
-  on:click={(e) => e.stopPropagation()}
 >
   <div
     class="w-full h-8 min-h-[2rem] grid justify-items-center items-center grid-cols-3 relative drop-shadow-sm px-2 min-w-max bg-neutral-700 filter"
