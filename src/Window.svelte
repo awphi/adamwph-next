@@ -14,8 +14,9 @@
   let height: number;
   let lastX: number;
   let lastY: number;
+  let container: HTMLElement;
 
-  function startMoving(e: PointerEvent | TouchEvent) {
+  function startMoving() {
     setMoving(true);
   }
 
@@ -83,6 +84,10 @@
     window.addEventListener("touchmove", onMouseMove);
 
     assertPosition();
+    // TODO replace CSS resize with custom resize for cross-browser compatability and to have a reactive appWindow.width instead of appWindow.initialWidth
+    // Set the height on mount, after that let CSS resize take over
+    container.style.width = appWindow.initialWidth + "px";
+    container.style.height = appWindow.initialHeight + "px";
 
     return () => {
       window.removeEventListener("pointerup", onMouseUp);
@@ -105,14 +110,13 @@
   style:z-index={`${appWindow.isFocused ? 30 : 20}`}
   style:left={`${appWindow.left}px`}
   style:top={`${appWindow.top}px`}
-  style:width={`${appWindow.windowWidth}px`}
-  style:height={`${appWindow.windowHeight}px`}
   on:pointerdown={onPointerDown}
   transition:scale={windowTransition}
   on:introstart={() => (transitioning = true)}
   on:introend={() => (transitioning = false)}
   on:outrostart={() => (transitioning = true)}
   on:outroend={() => (transitioning = false)}
+  bind:this={container}
 >
   <div
     class="w-full h-8 min-h-[2rem] grid justify-items-center items-center grid-cols-3 relative drop-shadow-sm px-2 min-w-max bg-neutral-700 filter"

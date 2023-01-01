@@ -12,8 +12,8 @@ export interface WindowDef {
   props?: {
     [id: string]: any;
   };
-  windowHeight: number;
-  windowWidth: number;
+  initialHeight: number;
+  initialWidth: number;
 }
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
@@ -23,8 +23,8 @@ export type PartialWindow = Optional<
   | "isMaximized"
   | "isMinimized"
   | "resizable"
-  | "windowWidth"
-  | "windowHeight"
+  | "initialWidth"
+  | "initialHeight"
   | "left"
   | "top"
   | "isFocused"

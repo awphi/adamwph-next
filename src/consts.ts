@@ -12,8 +12,8 @@ export const appIconBarTransition = {
 export const defaultWindowProps: Required<PartialWindow> = {
   left: 100,
   top: 100,
-  windowWidth: 600,
-  windowHeight: 400,
+  initialWidth: 600,
+  initialHeight: 400,
   resizable: true,
   isMaximized: false,
   isMinimized: false,

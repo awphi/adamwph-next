@@ -80,7 +80,7 @@
       type="text"
       name="Terminal Input"
       id="terminal-input"
-      class="bg-transparent outline-none text-green-500 flex-1 line-content"
+      class="bg-transparent outline-none text-green-500 flex-1 line-content w-0"
       on:keypress={onKeyPress}
     />
   </div>

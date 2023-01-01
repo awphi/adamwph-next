@@ -14,7 +14,7 @@ export const appDefs: AppDef[] = [
     spawn() {
       return {
         title: "Terminal",
-        windowWidth: 640,
+        initialWidth: 640,
       };
     },
   },
