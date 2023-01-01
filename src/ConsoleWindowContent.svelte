@@ -4,6 +4,8 @@
 
   export let prompt = "adamw.ph";
   export let symbol = ":$";
+  export let isFocused: boolean;
+  export let moving: boolean;
 
   interface LineDef {
     type: "command" | "stdout";
@@ -45,6 +47,11 @@
     tick().then(() => {
       contentEl.parentElement.scrollTo(0, contentEl.parentElement.scrollHeight);
     });
+  }
+
+  // if (isFocused && !moving) can be used as a way of reactiving to being focused, unminimized or moved to re-obtain DOM focus
+  $: if (isFocused && !moving && inputEl) {
+    inputEl.focus();
   }
 </script>
 

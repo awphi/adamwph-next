@@ -15,7 +15,7 @@
   let lastX: number;
   let lastY: number;
 
-  function startMoving() {
+  function startMoving(e: PointerEvent | TouchEvent) {
     setMoving(true);
   }
 
@@ -116,7 +116,7 @@
 >
   <div
     class="w-full h-8 min-h-[2rem] grid justify-items-center items-center grid-cols-3 relative drop-shadow-sm px-2 min-w-max bg-neutral-700 filter"
-    class:contrast-[110%]={appWindow.isFocused}
+    class:contrast-[120%]={appWindow.isFocused}
     on:pointerdown={startMoving}
     on:touchstart={startMoving}
     bind:offsetWidth={width}
@@ -131,15 +131,11 @@
     <div class="flex gap-1 w-full flex-row-reverse">
       <button
         class="bg-green-500 hover:bg-green-600 ctrl-btn"
-        on:click={() => {
-          appWindow.isMaximized = true;
-        }}
+        on:click={() => dispatch("maximize")}
       />
       <button
         class="bg-yellow-500 hover:bg-yellow-600 ctrl-btn"
-        on:click={() => {
-          appWindow.isMinimized = true;
-        }}
+        on:click={() => dispatch("minimize")}
       />
       <button
         class="bg-red-500 hover:bg-red-600 ctrl-btn"
@@ -148,7 +144,7 @@
     </div>
   </div>
   <div class="bg-neutral-600 flex-1 overflow-auto flex flex-col">
-    <slot {transitioning} name="content" />
+    <slot {moving} {transitioning} name="content" />
   </div>
 </div>
 

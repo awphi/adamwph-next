@@ -49,6 +49,13 @@
               // Setting it to null does the trick and let the gc worry about memory...
               appWindows[i] = null;
             }}
+            on:minimize={() => {
+              appWindow.isMinimized = true;
+              if (appWindow.isFocused) {
+                focusWindow(null);
+              }
+              appWindows = appWindows;
+            }}
             on:moving-state-changed={({ detail }) => {
               isAnyWindowMoving = detail;
             }}
@@ -58,8 +65,11 @@
             <svelte:component
               this={appWindow.app.component}
               let:transitioning
+              let:moving
               {...appWindow.props}
               {transitioning}
+              {moving}
+              isFocused={appWindow.isFocused}
               slot="content"
             />
           </Window>
@@ -81,6 +91,7 @@
           {appWindows}
           on:minimize-change={({ detail: { appWindow, state } }) => {
             appWindow.isMinimized = state;
+            focusWindow(appWindow);
             appWindows = appWindows;
           }}
         />
