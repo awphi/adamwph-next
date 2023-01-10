@@ -17,14 +17,14 @@
   let isMenuOpen = false;
 
   function onContextMenu(e: MouseEvent): void {
-    // Firefox and Safari don't implictly focus a button on click
+    // Safari doesn't implictly focus a button on click
     button.focus();
     e.preventDefault();
     isMenuOpen = true;
   }
 
   function onClick(e: MouseEvent): void {
-    // Firefox and Safari don't implictly focus a button on click
+    // Safari doesn't implictly focus a button on click
     button.focus();
     e.stopPropagation();
     if (openInstancesOfApp.length === 0) {
@@ -52,10 +52,12 @@
     on:contextmenu={onContextMenu}
     bind:this={button}
     on:blur={() => {
-      // We only close the menu if nothing in the menu has focus (to give it time to forward events back to this component) - it will close itself
-      if (container.querySelector(":active") === null) {
-        isMenuOpen = false;
-      }
+      // Wrapping the check in a 0ms timeout seems to make this work on firefox/safari as it does in chrome
+      setTimeout(() => {
+        if (container.querySelector(":active") === null) {
+          isMenuOpen = false;
+        }
+      }, 0);
     }}
   >
     <Icon icon={app.icon} slot="icon" class="flex-1" width="84" />
