@@ -24,6 +24,8 @@ Object.entries(executables).forEach(([id, f]) => {
   volDef[id] = f.toString();
 });
 
+let cwd = "/";
+
 // Micro-fs API to keep bundle size small
 const fs = {
   exists(pth: string): boolean {
@@ -61,7 +63,7 @@ const fs = {
 const commandMap: { [id: string]: CommandDef } = {
   help: { cmd: help, desc: "Opens this help menu.", usage: "help" },
   pwd: {
-    cmd: () => [process.cwd()],
+    cmd: () => [cwd],
     desc: "Prints the current working directory.",
     usage: "pwd",
   },
@@ -157,7 +159,7 @@ async function git(): Promise<string[]> {
 function ls(ops: string[]): string[] {
   let a = false;
   let e = "ls: ";
-  let dir = process.cwd();
+  let dir = cwd;
 
   while (ops.length > 0) {
     var op = ops.pop();
