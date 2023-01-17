@@ -25,6 +25,9 @@ Object.entries(executables).forEach(([id, f]) => {
 });
 
 let cwd = "/";
+(window as any).process = {
+  cwd: () => cwd,
+};
 
 // Micro-fs API to keep bundle size small
 const fs = {

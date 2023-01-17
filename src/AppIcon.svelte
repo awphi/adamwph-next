@@ -84,6 +84,6 @@
   .app-icon {
     outline-color: rgba(229, 229, 229, 0.3);
     grid-template-rows: min-content minmax(0, 1fr);
-    @apply grid w-fit justify-items-center outline-1 hover:outline focus:outline rounded-sm focus:bg-blue-600 hover:bg-neutral-200 hover:bg-opacity-5 focus:bg-opacity-5 transition-colors select-none px-2;
+    @apply grid w-28 justify-items-center outline-1 hover:outline focus:outline rounded-sm focus:bg-blue-600 hover:bg-neutral-200 hover:bg-opacity-5 focus:bg-opacity-5 transition-colors select-none px-2;
   }
 </style>

@@ -1,7 +1,8 @@
 import type { AppDef } from "./types";
 import ConsoleWindowContent from "./ConsoleWindowContent.svelte";
 import PrismWindowContent from "./PrismWindowContent.svelte";
-import DissertationWindowContent from "./DissertationWindowContent.svelte";
+import DissertationWindowContent from "./EmbedWindowContent.svelte";
+import GitProjectExplorerWindowContent from "./GitProjectExplorerWindowContent.svelte";
 
 /**
  * New apps can be added here, they have a few required properties and must implement a method to spawn a new window of the app.
@@ -36,12 +37,28 @@ export const appDefs: AppDef[] = [
     },
   },
   {
-    name: "dissertation.pdf",
-    icon: "mdi:file-document-outline",
+    name: "my-bachelors-paper.pdf",
+    icon: "mdi:university-outline",
     component: DissertationWindowContent,
     spawn() {
       return {
-        title: "Dissertation - GlassCasino",
+        title: "GlassCasino - Adam Hodson",
+        props: {
+          type: "application/pdf",
+          src: "./GlassCasino-AdamHodson.pdf",
+        },
+      };
+    },
+  },
+  {
+    name: "Project Explorer",
+    icon: "mdi:projector-screen-outline",
+    component: GitProjectExplorerWindowContent,
+    spawn() {
+      return {
+        title: "GitHub Project Explorer",
+        initialHeight: 440,
+        initialWidth: 680,
       };
     },
   },

@@ -147,7 +147,7 @@
       />
     </div>
   </div>
-  <div class="bg-neutral-600 flex-1 overflow-auto flex flex-col">
+  <div class="bg-neutral-600 overflow-hidden flex-1 flex flex-col">
     <slot {moving} {transitioning} name="content" />
   </div>
 </div>

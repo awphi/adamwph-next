@@ -52,7 +52,7 @@
   });
 </script>
 
-<div bind:this={container} class="h-full">
+<div bind:this={container} class="flex-1 overflow-auto">
   <pre class={`line-numbers h-full language-${language}`} bind:this={pre}><code
       bind:this={code}
     /></pre>

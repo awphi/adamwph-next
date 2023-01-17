@@ -45,7 +45,7 @@
   $: if (lines && contentEl) {
     // Await one tick for DOM to re-render with new line
     tick().then(() => {
-      contentEl.parentElement.scrollTo(0, contentEl.parentElement.scrollHeight);
+      contentEl.scrollTo(0, contentEl.scrollHeight);
     });
   }
 
@@ -57,7 +57,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-  class="w-full flex-1 bg-neutral-900 px-2 py-1 flex flex-col whitespace-pre-wrap"
+  class="w-full flex-1 bg-neutral-900 px-2 py-1 flex flex-col overflow-auto whitespace-pre-wrap"
   on:click={() => inputEl.focus()}
   bind:this={contentEl}
 >
