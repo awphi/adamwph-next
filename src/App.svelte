@@ -1,10 +1,10 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import AppIcon from "./AppIcon.svelte";
-  import { appDefs } from "./apps";
-  import { defaultWindowProps } from "./consts";
-  import type { AppDef, WindowDef } from "./types";
-  import Window from "./Window.svelte";
+  import AppIcon from "./lib/components/AppIcon.svelte";
+  import { appDefs } from "./lib/apps";
+  import { defaultWindowProps } from "./lib/consts";
+  import type { AppDef, WindowDef } from "./lib/types";
+  import Window from "./lib/components/Window.svelte";
 
   let isAnyWindowMoving = false;
 

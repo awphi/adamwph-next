@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from "svelte";
   import { scale } from "svelte/transition";
-  import { windowTransition } from "./consts";
-  import type { WindowDef } from "./types";
+  import { windowTransition } from "../consts";
+  import type { WindowDef } from "../types";
 
   const dispatch = createEventDispatcher();
 

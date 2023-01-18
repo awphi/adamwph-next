@@ -1,6 +1,6 @@
 <script lang="ts">
   import { tick } from "svelte";
-  import { execute } from "./commands";
+  import { execute } from "../commands";
 
   export let prompt = "adamw.ph";
   export let symbol = ":$";

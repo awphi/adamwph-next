@@ -1,8 +1,8 @@
 import type { AppDef } from "./types";
-import ConsoleWindowContent from "./ConsoleWindowContent.svelte";
-import PrismWindowContent from "./PrismWindowContent.svelte";
-import DissertationWindowContent from "./EmbedWindowContent.svelte";
-import GitProjectExplorerWindowContent from "./GitProjectExplorerWindowContent.svelte";
+import ConsoleWindowContent from "./components/ConsoleWindowContent.svelte";
+import PrismWindowContent from "./components/PrismWindowContent.svelte";
+import DissertationWindowContent from "./components/EmbedWindowContent.svelte";
+import GitProjectExplorerWindowContent from "./components/GitProjectExplorerWindowContent.svelte";
 
 /**
  * New apps can be added here, they have a few required properties and must implement a method to spawn a new window of the app.
@@ -20,7 +20,7 @@ export const appDefs: AppDef[] = [
         top: 100,
         props: {
           language: "markdown",
-          source: import("./assets/welcome.md?raw"),
+          source: import("../assets/welcome.md?raw"),
         },
       };
     },

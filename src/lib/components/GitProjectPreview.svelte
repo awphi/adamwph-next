@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { GitHubProject } from "./vendor-types";
+  import type { GitHubProject } from ".,/vendor-types";
 
   export let project: undefined | GitHubProject = undefined;
   export let error: Error | undefined = undefined;

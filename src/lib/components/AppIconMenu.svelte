@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { WindowDef } from "./types";
+  import type { WindowDef } from "../types";
   import Icon from "@iconify/svelte";
   import { createEventDispatcher } from "svelte";
   import { scale } from "svelte/transition";
-  import { windowTransition } from "./consts";
+  import { windowTransition } from "../consts";
 
   const dispatch = createEventDispatcher();
 

@@ -1,7 +1,7 @@
 <script lang="ts">
   import GitProjectPreview from "./GitProjectPreview.svelte";
   import Spinner from "./Spinner.svelte";
-  import type { GitHubProject } from "./vendor-types";
+  import type { GitHubProject } from "../vendor-types";
 
   async function fetchProjects(url: string): Promise<GitHubProject[]> {
     // TODO look into adding a cookie policy + caching this in localStorage for a day or so?

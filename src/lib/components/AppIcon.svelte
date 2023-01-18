@@ -3,8 +3,8 @@
   import { createEventDispatcher } from "svelte";
   import { fade } from "svelte/transition";
   import AppIconMenu from "./AppIconMenu.svelte";
-  import { appIconBarTransition } from "./consts";
-  import type { AppDef, WindowDef } from "./types";
+  import { appIconBarTransition } from "../consts";
+  import type { AppDef, WindowDef } from "../types";
 
   const dispatch = createEventDispatcher();
 

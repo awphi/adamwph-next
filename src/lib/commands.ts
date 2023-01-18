@@ -1,6 +1,14 @@
-import { resolve, parse } from "path";
+import { makeFs, type CommandFunc } from "./micro-fs";
 
-type CommandFunc = (args: string[]) => string[] | Promise<string[]>;
+const fs = makeFs(
+  {
+    "/secrets/adam.txt": "Easter egg #1! (╯°□°）╯︵ ┻━┻",
+    "/.hidden.txt": "Easter egg #2!",
+  },
+  {
+    "/bitcoin_miner": bitcoin_miner,
+  }
+);
 
 interface CommandDef {
   cmd: CommandFunc;
@@ -8,65 +16,10 @@ interface CommandDef {
   usage: string;
 }
 
-// Specify our executables - these will get added to the in-mem fs as readable files that can also be executed
-const executables: { [id: string]: CommandFunc } = {
-  "/bitcoin_miner": bitcoin_miner,
-};
-
-// Specify our text files. We can specify dirs here
-const volDef = {
-  "/secrets/adam.txt": "Easter egg #1! (╯°□°）╯︵ ┻━┻",
-  "/.hidden.txt": "Easter egg #2!",
-};
-
-// Add our executables source code to the file system
-Object.entries(executables).forEach(([id, f]) => {
-  volDef[id] = f.toString();
-});
-
-let cwd = "/";
-(window as any).process = {
-  cwd: () => cwd,
-};
-
-// Micro-fs API to keep bundle size small
-const fs = {
-  exists(pth: string): boolean {
-    const res = resolve(pth);
-    // Resolve all the unique directories present in the volume definition
-    const dirs = [...new Set(Object.keys(volDef).map((d) => parse(d).dir))];
-    return (
-      res in volDef || dirs.includes(res) || dirs.some((d) => d.startsWith(res))
-    );
-  },
-  isDirectory(pth: string): boolean {
-    // Naive as hell but works for this simple app
-    const res = resolve(pth);
-    return fs.exists(pth) && !res.includes(".") && !(res in executables);
-  },
-  readFile(pth: string): string | undefined {
-    return volDef[resolve(pth)];
-  },
-  readDir(pth: string): string[] {
-    const res = resolve(pth);
-    const contents = Object.keys(volDef)
-      .filter((a) => a.startsWith(res))
-      .map((a) => {
-        // Lob of the directory from the start of the URI
-        const lobbed = a.split(res)[1];
-        const parts = lobbed.split("/");
-        // Only search 1 level deep, we take the min to deal with being at root (/)
-        return parts[Math.min(parts.length - 1, 1)];
-      });
-    // Unique-ify
-    return [...new Set(contents)];
-  },
-};
-
 const commandMap: { [id: string]: CommandDef } = {
   help: { cmd: help, desc: "Opens this help menu.", usage: "help" },
   pwd: {
-    cmd: () => [cwd],
+    cmd: () => [fs.cwd()],
     desc: "Prints the current working directory.",
     usage: "pwd",
   },
@@ -162,7 +115,7 @@ async function git(): Promise<string[]> {
 function ls(ops: string[]): string[] {
   let a = false;
   let e = "ls: ";
-  let dir = cwd;
+  let dir = fs.cwd();
 
   while (ops.length > 0) {
     var op = ops.pop();
@@ -222,12 +175,10 @@ export async function execute(
     return res;
   }
 
-  if (fs.exists(prog)) {
-    const exe = resolve(`./${prog}`);
-    if (exe in executables) {
-      const res = await executables[exe](ops);
-      return res;
-    }
+  const exe = fs.findExecutable(prog);
+  if (exe !== null) {
+    const res = await exe(ops);
+    return res;
   }
 
   return Promise.resolve([`${terminalName}: ${prog}: command not found`]);
