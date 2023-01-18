@@ -4,7 +4,7 @@
   import type { GitHubProject } from "./vendor-types";
 
   async function fetchProjects(url: string): Promise<GitHubProject[]> {
-    await new Promise((res) => setTimeout(res, 1000));
+    // TODO look into adding a cookie policy + caching this in localStorage for a day or so?
     const res = await fetch(url);
     console.log(res);
     if (!res.ok) {
@@ -77,6 +77,6 @@
   }
 
   .right-bar {
-    @apply w-2/3;
+    @apply w-2/3 overflow-y-auto min-h-full;
   }
 </style>
