@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { GitHubProject } from ".,/vendor-types";
+  import type { GitHubProject } from "../vendor-types";
 
   export let project: undefined | GitHubProject = undefined;
   export let error: Error | undefined = undefined;
@@ -7,6 +7,8 @@
 
   let statusString: string;
   let statusClass: string;
+  let imageUrl: string;
+
   $: statusString = error
     ? "Error: " + error.message
     : done
@@ -17,6 +19,12 @@
     : done
     ? "text-green-500"
     : "text-orange-400";
+  $: imageUrl =
+    project === undefined
+      ? ""
+      : `https://via.placeholder.com/1920x1080.png?text=${encodeURI(
+          `No image found for "${project.name}"`
+        )}`;
 </script>
 
 <div class="flex min-h-full flex-col">
@@ -55,11 +63,7 @@
       <h2 class="italic text-sm">{project.description}</h2>
       <hr class="my-2" />
       <div class="relative">
-        <img
-          src="https://loremflickr.com/1920/1080"
-          alt=""
-          class="rounded-md aspect-video w-full"
-        />
+        <img src={imageUrl} alt="" class="rounded-md aspect-video w-full" />
         <div
           class="rounded-tl-md absolute right-0 bottom-0 bg-neutral-600 bg-opacity-90 px-2 py-1 w-fit"
         >
