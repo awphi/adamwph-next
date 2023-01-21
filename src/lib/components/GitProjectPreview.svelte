@@ -1,5 +1,8 @@
 <script lang="ts">
   import type { GitHubProject } from "../vendor-types";
+  import Spinner from "./Spinner.svelte";
+  import { marked } from "marked";
+  import "./marked.css";
 
   export let project: undefined | GitHubProject = undefined;
   export let error: Error | undefined = undefined;
@@ -8,6 +11,7 @@
   let statusString: string;
   let statusClass: string;
   let imageUrl: string;
+  let descriptionMarkdown: Promise<string>;
 
   $: statusString = error
     ? "Error: " + error.message
@@ -25,12 +29,23 @@
       : `https://via.placeholder.com/1920x1080.png?text=${encodeURI(
           `No image found for "${project.name}"`
         )}`;
+  $: descriptionMarkdown =
+    project === undefined
+      ? Promise.resolve("")
+      : import(`../../assets/projects/descriptions/${project.name}.md?raw`)
+          .then((r) => r.default)
+          .then((t) => marked.parse(t))
+          .catch(() =>
+            marked.parse(
+              `# What is ${project.name}? \n Could not find description for \`${project.name}\`. Please check back later once I've written one! ;)`
+            )
+          );
 </script>
 
 <div class="flex min-h-full flex-col">
   <div class="flex-1 py-1 px-2 relative">
     {#if project === undefined}
-      <h1 class="text-2xl bold">GitHub Project Explorer</h1>
+      <h1 class="text-2xl font-bold">GitHub Project Explorer</h1>
       <hr class="border-opacity-50 border-neutral-200 my-1" />
       <p>
         This app lets you explore some of my various side projects that I've
@@ -59,7 +74,7 @@
       </div>
     {/if}
     {#if project !== undefined}
-      <h1 class="text-2xl bold">{project.name}</h1>
+      <h1 class="text-2xl font-bold">{project.name}</h1>
       <h2 class="italic text-sm">{project.description}</h2>
       <hr class="my-2" />
       <div class="relative">
@@ -80,22 +95,10 @@
         </div>
       </div>
       <hr class="my-2" />
-
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut suscipit
-        eget ipsum vitae dapibus. Mauris aliquam ultricies libero a euismod.
-        Curabitur eu arcu ac mi efficitur fermentum. Suspendisse augue tellus,
-        egestas ac blandit ut, gravida vel ante. Quisque non ultrices enim.
-        Phasellus nec est ut est suscipit auctor. Integer eu volutpat purus.
-      </p>
-      <p>
-        Phasellus sagittis augue nec felis varius sollicitudin. Integer cursus
-        quam quis fermentum euismod. Donec tristique ipsum tristique, blandit
-        diam a, pulvinar nulla. Aenean vel nulla nibh. Aenean euismod hendrerit
-        euismod. Vestibulum vel felis nisl. Nunc tincidunt est vitae lectus
-        blandit pulvinar. Maecenas efficitur lacus vitae sapien vulputate
-        feugiat.
-      </p>
+      <!-- Should be very quick so don't need a spinner while loading -->
+      {#await descriptionMarkdown then desc}
+        <div class="marked">{@html desc}</div>
+      {/await}
     {/if}
   </div>
 </div>

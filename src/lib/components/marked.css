@@ -1,0 +1,27 @@
+.marked > h1 {
+  @apply text-2xl font-bold;
+}
+
+.marked > h2 {
+  @apply text-xl font-bold;
+}
+
+.marked > h3 {
+  @apply text-lg;
+}
+
+.marked > p > code {
+  @apply bg-black bg-opacity-10 px-1 py-0.5 rounded-sm;
+}
+
+.marked > p > a {
+  @apply underline hover:text-neutral-400;
+}
+
+.marked > p + p {
+  @apply mt-2;
+}
+
+.marked > p + h1 {
+  @apply mt-4;
+}

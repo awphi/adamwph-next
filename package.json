@@ -27,6 +27,8 @@
     "vite": "^4.0.0"
   },
   "dependencies": {
+    "@types/marked": "^4.0.8",
+    "marked": "^4.2.12",
     "path-browserify": "^1.0.1",
     "prismjs": "^1.29.0"
   }
