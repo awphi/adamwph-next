@@ -40,6 +40,7 @@
       {#each projects as proj, i}
         <button
           class="w-full flex text-left gap-1 items-center p-1 rounded-md bg-neutral-600"
+          id={"project-btn-" + proj.name}
           class:hover:contrast-125={selectedProjectIndex !== i}
           class:contrast-150={selectedProjectIndex === i}
           on:click={() => (selectedProjectIndex = i)}

@@ -10,11 +10,15 @@
   @apply text-lg;
 }
 
-.marked > p > code {
+.marked code {
   @apply bg-black bg-opacity-10 px-1 py-0.5 rounded-sm;
 }
 
-.marked > p > a {
+.marked a {
+  @apply underline hover:text-neutral-400;
+}
+
+.marked button {
   @apply underline hover:text-neutral-400;
 }
 

@@ -1,7 +1,7 @@
 # What is GlassCasino?
 GlassCasino was my third year BSc Computer Science project @ Durham University. The full paper is available on this site in PDF form as `my-bachelors-paper.pdf` on the desktop. This project was a large part of my 1st class grade.
 
-The project is still hosted today at [glasscasino.netlify.app](https://glasscasino.netlify.app/) and its full code including all smart contracts is available in the repo above.
+The project is still hosted today at <a href="https://glasscasino.netlify.app/" target="_blank" rel="noreferrer">glasscasino.netlify.app</a> and its full code including all smart contracts is available in the repo above.
 
 # Abstract
 In this work, we build a decentralised, secure and trustless online casino platform by leveraging modern public blockchain
