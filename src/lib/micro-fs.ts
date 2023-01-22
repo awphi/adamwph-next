@@ -20,11 +20,17 @@ export function makeFs(
   Object.entries(executables).forEach(([id, f]) => {
     volDef[id] = f.toString();
   });
-  // TODO if we ever allow cwd to change we will need a way to set an "active" microfs instance
   const cwd = "/";
+  // path.resolve uses process.cwd() to resolve relative directory inputs
+  // so we wrap all calls to path.resolve to ensure that cwd is accurate to this micro file system
+  function resolvePath(path: string): string {
+    (window as any).process = process;
+    return resolve(path);
+  }
+
   const fs = {
     exists(pth: string): boolean {
-      const res = resolve(pth);
+      const res = resolvePath(pth);
       // Resolve all the unique directories present in the volume definition
       const dirs = [...new Set(Object.keys(volDef).map((d) => parse(d).dir))];
       return (
@@ -35,14 +41,14 @@ export function makeFs(
     },
     isDirectory(pth: string): boolean {
       // Naive as hell but works for this simple app
-      const res = resolve(pth);
+      const res = resolvePath(pth);
       return fs.exists(pth) && !res.includes(".") && !(res in executables);
     },
     readFile(pth: string): string | undefined {
-      return volDef[resolve(pth)];
+      return volDef[resolvePath(pth)];
     },
     readDir(pth: string): string[] {
-      const res = resolve(pth);
+      const res = resolvePath(pth);
       const contents = Object.keys(volDef)
         .filter((a) => a.startsWith(res))
         .map((a) => {
@@ -58,7 +64,7 @@ export function makeFs(
     cwd: () => cwd,
     findExecutable: (prog: string): CommandFunc | null => {
       if (fs.exists(prog)) {
-        const exe = resolve(`./${prog}`);
+        const exe = resolvePath(`./${prog}`);
         if (exe in executables) {
           return executables[exe];
         }
@@ -67,7 +73,7 @@ export function makeFs(
     },
   };
 
-  (window as any).process = {
+  const process = {
     cwd: fs.cwd,
   };
 
