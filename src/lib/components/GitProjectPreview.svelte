@@ -85,7 +85,7 @@
       <h2 class="italic text-sm">{project.description}</h2>
       <hr class="my-2" />
       <div class="relative">
-        <img src={imageUrl} alt="" class="rounded-md w-full" />
+        <img src={imageUrl} alt="" class="rounded-md w-full bg-white" />
         <div
           class="rounded-tl-md absolute right-0 bottom-0 bg-neutral-600 bg-opacity-90 px-2 py-1 w-fit"
         >

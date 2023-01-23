@@ -3,7 +3,8 @@
   import Spinner from "./Spinner.svelte";
   import type { GitHubProject } from "../vendor-types";
 
-  async function fetchProjects(url: string): Promise<GitHubProject[]> {
+  async function fetchProjects(username: string): Promise<GitHubProject[]> {
+    const url = `https://api.github.com/users/${username}/repos`;
     // TODO look into adding a cookie policy + caching this in localStorage for a day or so?
     const res = await fetch(url);
     console.log(res);
@@ -14,17 +15,18 @@
     json.forEach((v) => {
       v.pushed_at = Date.parse(v.pushed_at);
     });
-    const projects = json.sort(function (a, b) {
-      return b.pushed_at - a.pushed_at;
-    });
+    // Filter out username repo (as it's just a config bucket) and sort by last push time
+    const projects = json
+      .filter((p) => p.name !== username)
+      .sort(function (a, b) {
+        return b.pushed_at - a.pushed_at;
+      });
     console.log(projects);
     return projects;
   }
 
   let selectedProjectIndex = -1;
-  let sortedProjects = fetchProjects(
-    "https://api.github.com/users/awphi/repos"
-  );
+  let sortedProjects = fetchProjects("awphi");
 </script>
 
 <div class="flex h-full">
