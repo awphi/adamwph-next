@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { GitHubProject } from "../vendor-types";
-  import Spinner from "./Spinner.svelte";
   import { marked } from "marked";
   import "./marked.css";
 
@@ -23,12 +22,20 @@
     : done
     ? "text-green-500"
     : "text-orange-400";
-  $: imageUrl =
-    project === undefined
-      ? ""
-      : `https://via.placeholder.com/1920x1080.png?text=${encodeURI(
-          `No image found for "${project.name}"`
-        )}`;
+  $: {
+    if (project !== undefined) {
+      import(`../../assets/projects/images/${project.name}.png`)
+        .then((a) => {
+          imageUrl = a.default;
+        })
+        .catch(
+          () =>
+            (imageUrl = `https://via.placeholder.com/1920x1080.png?text=${encodeURI(
+              `No image found for "${project.name}"`
+            )}`)
+        );
+    }
+  }
   $: descriptionMarkdown =
     project === undefined
       ? Promise.resolve("")
@@ -78,7 +85,7 @@
       <h2 class="italic text-sm">{project.description}</h2>
       <hr class="my-2" />
       <div class="relative">
-        <img src={imageUrl} alt="" class="rounded-md aspect-video w-full" />
+        <img src={imageUrl} alt="" class="rounded-md w-full" />
         <div
           class="rounded-tl-md absolute right-0 bottom-0 bg-neutral-600 bg-opacity-90 px-2 py-1 w-fit"
         >
