@@ -10,6 +10,7 @@
   let statusString: string;
   let statusClass: string;
   let imageUrl: string;
+  let imageError: boolean = false;
   let descriptionMarkdown: Promise<string>;
 
   $: statusString = error
@@ -23,19 +24,11 @@
     ? "text-green-500"
     : "text-orange-400";
   $: {
-    if (project !== undefined) {
-      import(`../../assets/projects/images/${project.name}.png`)
-        .then((a) => {
-          imageUrl = a.default;
-        })
-        .catch(
-          () =>
-            (imageUrl = `https://via.placeholder.com/1920x1080.png?text=${encodeURI(
-              `No image found for "${project.name}"`
-            )}`)
-        );
-    }
+    imageUrl =
+      project !== undefined ? `project-images/${project.name}.png` : "";
+    imageError = false;
   }
+
   $: descriptionMarkdown =
     project === undefined
       ? Promise.resolve("")
@@ -85,7 +78,27 @@
       <h2 class="italic text-sm">{project.description}</h2>
       <hr class="my-2" />
       <div class="relative">
-        <img src={imageUrl} alt="" class="rounded-md w-full bg-white" />
+        <div
+          class="relative aspect-video border-neutral-700 bg-neutral-300 border-[1px] rounded-md"
+        >
+          {#if !imageError}
+            <img
+              src={imageUrl}
+              on:error={() => (imageError = true)}
+              alt=""
+              height="1080"
+              width="1920"
+              class="w-full aspect-video object-contain"
+            />
+          {/if}
+          {#if imageError}
+            <p
+              class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-neutral-400 text-xl text-center"
+            >
+              Couldn't find an image for "{project.name}" - check back soon!
+            </p>
+          {/if}
+        </div>
         <div
           class="rounded-tl-md absolute right-0 bottom-0 bg-neutral-600 bg-opacity-90 px-2 py-1 w-fit"
         >
