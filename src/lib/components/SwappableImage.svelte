@@ -16,11 +16,8 @@
     imageLoadState = "loading";
 
     if (lastImageUrl !== src) {
-      setTimeout(() => {
-        console.log("setting src", src);
-        imageElement.src = src;
-        lastImageUrl = src;
-      }, 1000);
+      imageElement.src = src;
+      lastImageUrl = src;
     }
   }
 </script>

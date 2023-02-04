@@ -80,6 +80,6 @@
   }
 
   .right-bar {
-    @apply w-2/3 overflow-y-auto min-h-full;
+    @apply w-2/3 min-h-full overflow-y-scroll;
   }
 </style>
