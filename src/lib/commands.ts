@@ -1,6 +1,6 @@
-import { makeFs, type CommandFunc } from "./micro-fs";
+import microfs, { type CommandFunc } from "micro-memfs";
 
-const fs = makeFs(
+const fs = microfs(
   {
     "/secrets/adam.txt": "Easter egg #1! (╯°□°）╯︵ ┻━┻",
     "/.hidden.txt": "Easter egg #2!",

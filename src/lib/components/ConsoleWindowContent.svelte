@@ -13,6 +13,7 @@
   }
 
   async function onKeyPress(e: KeyboardEvent): Promise<void> {
+    // TODO up/down arrow to navigate command history would be nice
     if (e.key === "Enter") {
       lines.push({
         type: "command",

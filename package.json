@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "author": "adamwph/awphi (https://adamw.ph)",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -13,7 +14,6 @@
     "@iconify/svelte": "^3.0.1",
     "@sveltejs/vite-plugin-svelte": "^2.0.0",
     "@tsconfig/svelte": "^3.0.0",
-    "@types/path-browserify": "^1.0.0",
     "@types/prismjs": "^1.26.0",
     "autoprefixer": "^10.4.7",
     "postcss": "^8.4.14",
@@ -29,7 +29,7 @@
   "dependencies": {
     "@types/marked": "^4.0.8",
     "marked": "^4.2.12",
-    "path-browserify": "^1.0.1",
+    "micro-memfs": "^1.0.5",
     "prismjs": "^1.29.0"
   }
 }
