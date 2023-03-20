@@ -101,8 +101,8 @@
   <div class="footer">
     <div class="flex flex-col">
       <h1 class="font-bold">Adam Hodson</h1>
-      <h2>Graduate Software Engineer</h2>
-      <h2>ComSci Class of 2022 @ Durham University</h2>
+      <h2>Software Developer</h2>
+      <h2>Creating featureful, unique applications on the web.</h2>
     </div>
     <div class="flex gap-2">
       <a href="https://github.com/awphi">
