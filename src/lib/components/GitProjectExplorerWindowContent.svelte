@@ -4,7 +4,7 @@
   import type { GitHubProject } from "../vendor-types";
 
   async function fetchProjects(username: string): Promise<GitHubProject[]> {
-    const url = `https://api.github.com/users/${username}/repos`;
+    const url = `https://api.github.com/users/${username}/repos?per_page=100`;
     // TODO look into adding a cookie policy + caching this in localStorage for a day or so?
     const res = await fetch(url);
     console.log(res);
