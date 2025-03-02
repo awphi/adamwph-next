@@ -3,6 +3,8 @@
   import Spinner from "./Spinner.svelte";
   import type { GitHubProject } from "../vendor-types";
 
+  const excludedProjects = new Set<string>(["monaco-chrome-iframe-issue"]);
+
   async function fetchProjects(username: string): Promise<GitHubProject[]> {
     const url = `https://api.github.com/users/${username}/repos?per_page=100`;
     // TODO look into adding a cookie policy + caching this in localStorage for a day or so?
@@ -17,11 +19,8 @@
     });
     // Filter out username repo (as it's just a config bucket) and sort by last push time
     const projects = json
-      .filter((p) => p.name !== username)
-      .sort(function (a, b) {
-        return b.pushed_at - a.pushed_at;
-      });
-    console.log(projects);
+      .filter((p) => p.name !== username && !excludedProjects.has(p.name))
+      .sort((a, b) => b.pushed_at - a.pushed_at);
     return projects;
   }
 
