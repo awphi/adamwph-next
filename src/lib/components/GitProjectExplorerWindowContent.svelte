@@ -3,7 +3,21 @@
   import Spinner from "./Spinner.svelte";
   import type { GitHubProject } from "../vendor-types";
 
-  const excludedProjects = new Set<string>(["monaco-chrome-iframe-issue"]);
+  const excludedProjects = new Set<string>([
+    "monaco-chrome-iframe-issue",
+    "runelite-plugins",
+    "bioinformatics-summative",
+    "ads-summative",
+    "ecs-summative",
+    "systems-prog-project",
+    "networks-proj",
+    "image-proc-coursework",
+    "newsly",
+    "CForce",
+    "TD3-PyTorch-BipedalWalker-v2",
+    "canvas-gl",
+    "flippy-knife",
+  ]);
 
   async function fetchProjects(username: string): Promise<GitHubProject[]> {
     const url = `https://api.github.com/users/${username}/repos?per_page=100`;
