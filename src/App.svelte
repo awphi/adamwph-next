@@ -104,13 +104,17 @@
       <h2>Software Developer</h2>
       <h2>Creating featureful, unique applications on the web.</h2>
     </div>
-    <div class="flex gap-2">
+    <div class="flex gap-4">
       <a href="https://github.com/awphi">
-        <Icon icon="mdi:github" width="96" />
+        <Icon icon="mdi:github" width="56" />
       </a>
 
       <a href="https://www.linkedin.com/in/adam-h-a77275197/">
-        <Icon icon="mdi:linkedin" width="96" /></a
+        <Icon icon="mdi:linkedin" width="56" /></a
+      >
+
+      <a href="https://awphos.vercel.app/">
+        <Icon icon="mdi:new-box" width="56" /></a
       >
     </div>
   </div>
@@ -126,7 +130,7 @@
   }
 
   a {
-    @apply hover:text-neutral-300 text-neutral-200 pointer-events-auto;
+    @apply hover:text-neutral-400 text-neutral-200 pointer-events-auto;
   }
 
   main {
