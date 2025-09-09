@@ -16,13 +16,13 @@
   $: statusString = error
     ? "Error: " + error.message
     : done
-    ? "Fetched"
-    : "Fetching";
+      ? "Fetched"
+      : "Fetching";
   $: statusClass = error
     ? "text-red-500"
     : done
-    ? "text-green-500"
-    : "text-orange-400";
+      ? "text-green-500"
+      : "text-orange-400";
 
   $: descriptionMarkdown =
     project === undefined
@@ -41,7 +41,7 @@
   <div class="flex-1 py-1 px-2 relative">
     {#if project === undefined}
       <h1 class="text-2xl font-bold">GitHub Project Explorer</h1>
-      <hr class="border-opacity-50 border-neutral-200 my-1" />
+      <hr class="my-1" />
       <p>
         This app lets you explore some of my various side projects that I've
         made public on GitHub - all the source code can be viewed in the various
@@ -96,7 +96,7 @@
         <div
           class="rounded-tl-md absolute right-0 bottom-0 bg-neutral-600 bg-opacity-90 px-2 py-1 w-fit"
         >
-          <div class="grid info-grid grid-cols-[max-content_1fr] gap-x-4 ">
+          <div class="grid info-grid grid-cols-[max-content_1fr] gap-x-4">
             <span>Repo:</span>
             <a target="_blank" rel="noreferrer" href={project.html_url}
               >{project.name}</a
@@ -123,7 +123,7 @@
   }
 
   hr {
-    @apply border-opacity-50 border-neutral-200;
+    @apply border-neutral-500;
   }
 
   .info-grid > * {

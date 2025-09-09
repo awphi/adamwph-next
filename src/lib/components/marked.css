@@ -22,10 +22,14 @@
   @apply underline hover:text-neutral-400;
 }
 
-.marked > p + p {
+.marked > * + p {
   @apply mt-2;
 }
 
 .marked > p + h1 {
   @apply mt-4;
+}
+
+.marked > ul {
+  @apply list-disc pl-8;
 }

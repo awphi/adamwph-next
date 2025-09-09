@@ -89,7 +89,7 @@
 
 <style>
   .left-bar {
-    @apply flex flex-col w-1/3 h-full overflow-y-scroll p-1;
+    @apply flex flex-col w-1/3 h-full overflow-y-scroll p-1 border-r border-neutral-500;
   }
 
   .right-bar {
