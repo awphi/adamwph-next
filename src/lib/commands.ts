@@ -38,6 +38,11 @@ const commandMap: { [id: string]: CommandDef } = {
     desc: "Explore my public projects on GitHub.",
     usage: "git",
   },
+  cd: {
+    cmd: cd,
+    desc: "Change the working directory",
+    usage: "cd <dir>",
+  },
 };
 
 function bitcoin_miner(args: string[]): string[] {
@@ -149,6 +154,20 @@ function ls(ops: string[]): string[] {
     }
   });
   return [files.join("    ")];
+}
+
+function cd(ops: string[]): string[] {
+  let dir = fs.cwd();
+
+  if (ops.length === 1) {
+    try {
+      dir = fs.cwd(ops[0]);
+    } catch (_) {
+      return [`cd: no such directory: ${ops[0]}`];
+    }
+  }
+
+  return [dir];
 }
 
 function help(): string[] {
