@@ -26,7 +26,7 @@
             ({
               text: text,
               type: "stdout",
-            } as LineDef)
+            }) as LineDef
         )
       );
       inputEl.value = "";

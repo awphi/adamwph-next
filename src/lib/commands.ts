@@ -16,8 +16,15 @@ interface CommandDef {
   usage: string;
 }
 
+const helpDef: CommandDef = {
+  cmd: help,
+  desc: "Opens this help menu.",
+  usage: "help",
+};
+
 const commandMap: { [id: string]: CommandDef } = {
-  help: { cmd: help, desc: "Opens this help menu.", usage: "help" },
+  help: helpDef,
+  man: helpDef,
   pwd: {
     cmd: () => [fs.cwd()],
     desc: "Prints the current working directory.",
@@ -181,10 +188,7 @@ function help(): string[] {
   return result;
 }
 
-export async function execute(
-  cmd: string,
-  terminalName: string = "bash"
-): Promise<string[]> {
+export async function execute(cmd: string): Promise<string[]> {
   const arr = cmd.trim().split(" ");
   const ops = [...new Set(arr.splice(1))];
   const prog = arr[0].replaceAll(/\.|\//g, "");
@@ -200,5 +204,5 @@ export async function execute(
     return res;
   }
 
-  return Promise.resolve([`${terminalName}: ${prog}: command not found`]);
+  return Promise.resolve([`${prog}: command not found`]);
 }
