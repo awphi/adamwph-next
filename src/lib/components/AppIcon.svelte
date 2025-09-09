@@ -47,7 +47,7 @@
 <!-- Purposefully not using double click as a) it's bad on mobile and b) it's not expected for a website to respond to double clicks (usually) -->
 <div class="relative flex flex-col items-center" bind:this={container}>
   <button
-    class="app-icon"
+    class="app-icon relative"
     on:click={onClick}
     on:contextmenu={onContextMenu}
     bind:this={button}
@@ -67,7 +67,7 @@
     {#if openInstancesOfApp.length > 0}
       <div
         transition:fade={appIconBarTransition}
-        class="h-[2px] w-full bg-neutral-500 rounded-md"
+        class="h-0.5 w-4/5 bg-neutral-500 absolute bottom-1 rounded-md"
       />
     {/if}
   </button>
@@ -84,6 +84,6 @@
   .app-icon {
     outline-color: rgba(229, 229, 229, 0.3);
     grid-template-rows: min-content minmax(0, 1fr);
-    @apply grid w-28 justify-items-center outline-1 hover:outline focus:outline rounded-sm focus:bg-blue-600 hover:bg-neutral-200 hover:bg-opacity-5 focus:bg-opacity-5 transition-colors select-none px-2;
+    @apply grid w-28 pb-2 justify-items-center outline-1 hover:outline focus:outline rounded-sm focus:bg-blue-600 hover:bg-neutral-200 hover:bg-opacity-5 focus:bg-opacity-5 transition-colors select-none px-2;
   }
 </style>
