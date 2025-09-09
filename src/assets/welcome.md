@@ -1,10 +1,6 @@
 # Welcome
 
-Hey! I'm Adam, software engineer from Cambridge, UK. I graduated from Durham University in 2022 with 1st class BSc in Computer Science.
-
-I'm now a full-stack software engineer with 3+ years experience with a front-end focus. I pride myself on building performant, scalable and flexible web applications across many domains. I have a strong affinity for data visualisation and developer experience particularly when it comes to the intricacies of frontend build tooling.
-
-I've been programming for as long as I can remember (/cliche) and it's what I love to do - making stuff.
+Hey! I'm Adam, a full-stack software engineer with 3+ years experience with a front-end focus based in, and from, Cambridge, 🇬🇧. I've been programming for as long as I can remember (/cliche) and it's what I love to do - making stuff. I pride myself on building performant, scalable and flexible web applications across many domains. I have a strong affinity for data visualisation and developer experience particularly when it comes to the intricacies of frontend build tooling.
 
 # Interests & Experience
 
