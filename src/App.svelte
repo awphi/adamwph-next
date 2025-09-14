@@ -105,16 +105,22 @@
       <h2>Creating featureful, unique applications on the web.</h2>
     </div>
     <div class="flex gap-4">
+      <a class="flex items-center" href="https://awphos.vercel.app/">
+        <!-- hacky speech component - would be nicer in a component but good enough for now -->
+        <span class="bg-neutral-700 px-2 py-1 text-xs rounded-md"
+          >Check out the WIP v2 of this site here!</span
+        >
+        <span
+          class="border-8 -ml-1 border-neutral-700 w-0 h-0 border-r-transparent border-t-transparent border-b-transparent"
+        ></span>
+        <Icon icon="mdi:new-box" width="56" /></a
+      >
       <a href="https://github.com/awphi">
         <Icon icon="mdi:github" width="56" />
       </a>
 
       <a href="https://www.linkedin.com/in/adam-h-a77275197/">
         <Icon icon="mdi:linkedin" width="56" /></a
-      >
-
-      <a href="https://awphos.vercel.app/">
-        <Icon icon="mdi:new-box" width="56" /></a
       >
     </div>
   </div>
